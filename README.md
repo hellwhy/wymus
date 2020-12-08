@@ -1,19 +1,16 @@
-# wymus
+### 网易云音乐快速打卡
 
-## Project setup
-```
-npm install
-```
+登录后请点击打卡
+打开的歌曲可能会重复，建议多打几次
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### 安全
 
-### Compiles and minifies for production
-```
-npm run build
-```
+密码是通过 MD5 加密，不会记录账号和密码。
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 账号
+
+目前只支持手机号登录
+
+### 延迟
+
+接口会有所延迟，请耐心等待
