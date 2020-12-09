@@ -49,8 +49,21 @@
         block
         >签到</van-button
       >
+      <van-button
+        class="buttons"
+        @click="logout"
+        type="primary"
+        round
+        size="normal"
+        block
+        >退出</van-button
+      >
     </div>
-    <div></div>
+    <div class="bottoms">
+      <div>
+        <van-divider dashed>work</van-divider>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -67,51 +80,74 @@ export default {
     };
   },
   methods: {
+    // 登录接口
     postwork() {
+      // 整理数据结构 对密码进行md5加密
       let from = {
         uin: this.phone,
         pwd: this.$md5(this.pwd),
       };
+      // 如果账号 和 密码 都不是空 就弹出提示框 并发送请求
       if (this.phone !== "" && this.pwd !== "") {
         var totas = this.$toast.loading({
           duration: 100000,
           message: "登录中",
           forbidClick: true,
         });
+        // 调用请求
         this.$api.request.login(from, (res) => {
+          // 如果code是200 证明请求成功
           if (res.data.code == 200) {
+            // 把src 和 id赋值
             this.src = res.data.profile.avatarUrl;
             this.id = res.data.account.id;
+            // 清空提示框
             totas.clear();
+            // 如果id不是空 就提示登录成功
             if (this.id !== "") {
               this.$notify({ type: "success", message: "登录成功" });
             }
           } else {
+            // 清空提示框
             totas.clear();
+            // 报错提示框
             this.$toast.fail("登录失败，请重试");
           }
         });
       } else {
+        // 账号或密码不存在或错误
         this.$notify({
           type: "warning",
           message: "请输入账号和密码",
         });
       }
     },
+    // 退出
+    logout() {
+      // id给空
+      this.id = "";
+    },
+    // 打卡
     upclick() {
+      // 提示框
       var totas = this.$toast.loading({
         duration: 100000,
         message: "打卡中",
         forbidClick: true,
       });
+      // 打卡请求接口
       this.$api.request.daka((res) => {
+        // 如果code是200 证明请求成功 进行打卡
         if (res.data.code == 200) {
+          // 清空提示框
           totas.clear();
+          // 提示框
           this.$notify({
             type: "success",
             message: "打卡成功，建议多打几次，防止歌曲重复打卡失败",
           });
         } else {
+          // 如果code不是200 证明请求有问题 请重试
           this.$notify({
             type: "warning",
             message: "请重试",
@@ -119,14 +155,19 @@ export default {
         }
       });
     },
+    // 签到
     qiandao() {
+      // 调用接口
       this.$api.request.qiandao((res) => {
+        // 如果返回数据 小于1 可能是重复签到 或者 有其他问题
         if (res.code < 1) {
+          // 提示信息
           this.$notify({
             type: "warning",
             message: res.data.msg,
           });
         } else {
+          // 提示信息
           this.$notify({
             type: "success",
             message: res.data.msg,
@@ -151,5 +192,9 @@ export default {
 }
 /deep/ .van-button {
   margin-top: 0.5rem;
+}
+.bottoms {
+  position: absolute;
+  bottom: 0;
 }
 </style>
